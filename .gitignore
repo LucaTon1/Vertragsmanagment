@@ -1,0 +1,21 @@
+# Secrets
+.env
+.env.*
+
+# Temporäre Dateien
+.tmp/
+__pycache__/
+*.pyc
+*.pyo
+.DS_Store
+
+# Streamlit Cloud Secrets (lokal)
+.streamlit/secrets.toml
+
+# Output (nicht committen – wird lokal generiert)
+output/token_log.csv
+output/vertrags_datenbank.csv
+
+# Aber HTML-Reports und Analysen behalten:
+!output/*.html
+!output/*.md

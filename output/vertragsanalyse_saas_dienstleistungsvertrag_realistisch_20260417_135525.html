@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vertragsanalyse: SaaS Dienstleistungsvertrag Realistisch</title>
+<style>
+  /* ── Reset & Base ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 15px; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    background: #f0f2f5;
+    color: #1a1a2e;
+    line-height: 1.65;
+  }
+
+  /* ── Layout ── */
+  .page { max-width: 900px; margin: 0 auto; padding: 24px 16px 64px; }
+
+  /* ── Header ── */
+  .report-header {
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+    color: white;
+    border-radius: 12px 12px 0 0;
+    padding: 36px 40px 32px;
+    margin-bottom: 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .report-header::after {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+  }
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+  }
+  .brand {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 8px;
+  }
+  .report-title {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: white;
+    line-height: 1.2;
+  }
+  .status-badge {
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin-left: 16px;
+  }
+  .status-abgeschlossen { background: #10b981; color: white; }
+  .status-bearbeitung { background: #f59e0b; color: white; }
+  .header-meta {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .meta-item {
+    display: flex;
+    flex-direction: column;
+  }
+  .meta-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 2px;
+  }
+  .meta-value {
+    font-size: 13px;
+    color: rgba(255,255,255,0.85);
+    font-weight: 500;
+  }
+
+  /* ── Summary Card ── */
+  .summary-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-top: none;
+    padding: 28px 40px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px 48px;
+    margin-bottom: 0;
+  }
+  .summary-item { }
+  .summary-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #94a3b8;
+    margin-bottom: 4px;
+  }
+  .summary-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1e293b;
+  }
+  .summary-value.empty { color: #cbd5e1; font-style: italic; font-weight: 400; }
+
+  /* ── Fristen Box ── */
+  .fristen-box {
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-left: 4px solid #f59e0b;
+    border-top: none;
+    padding: 20px 40px;
+    margin-bottom: 20px;
+  }
+  .fristen-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .fristen-icon { font-size: 16px; }
+  .fristen-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #92400e;
+  }
+  .fristen-list {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .frist-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: white;
+    border: 1px solid #fcd34d;
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 12.5px;
+    color: #78350f;
+    font-weight: 500;
+  }
+  .frist-tag .frist-type {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #b45309;
+    background: #fef3c7;
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+
+  /* ── Section Cards ── */
+  .section {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+  .section-header {
+    padding: 16px 28px;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #fafbfc;
+  }
+  .section-number {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: #1e3a5f;
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .section-title {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #334155;
+  }
+  .section-body {
+    padding: 24px 28px;
+  }
+
+  /* ── Content Styles ── */
+  .field-row {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 8px 16px;
+    margin-bottom: 10px;
+    align-items: baseline;
+  }
+  .field-row:last-child { margin-bottom: 0; }
+  .field-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #64748b;
+    padding-top: 1px;
+  }
+  .field-value {
+    font-size: 14px;
+    color: #1e293b;
+  }
+  .field-value.empty { color: #cbd5e1; font-style: italic; }
+
+  .subsection-title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #64748b;
+    margin: 20px 0 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #f1f5f9;
+  }
+  .subsection-title:first-child { margin-top: 0; }
+
+  p, .text-content {
+    font-size: 14px;
+    color: #374151;
+    line-height: 1.7;
+    margin-bottom: 8px;
+  }
+  p:last-child { margin-bottom: 0; }
+
+  ul.content-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  ul.content-list li {
+    font-size: 14px;
+    color: #374151;
+    padding: 5px 0 5px 20px;
+    position: relative;
+    border-bottom: 1px solid #f8fafc;
+    line-height: 1.6;
+  }
+  ul.content-list li:last-child { border-bottom: none; }
+  ul.content-list li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: #94a3b8;
+    font-size: 12px;
+    top: 6px;
+  }
+
+  /* ── Risiken Section ── */
+  .risk-item {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-left: 3px solid #ef4444;
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin-bottom: 10px;
+    font-size: 14px;
+    color: #374151;
+    line-height: 1.6;
+  }
+  .risk-item:last-child { margin-bottom: 0; }
+  .risk-item.medium {
+    background: #fffbeb;
+    border-color: #fde68a;
+    border-left-color: #f59e0b;
+  }
+  .risk-empty {
+    color: #94a3b8;
+    font-style: italic;
+    font-size: 14px;
+  }
+
+  /* ── Empfehlungen ── */
+  .empfehlung-gruppe { margin-bottom: 20px; }
+  .empfehlung-gruppe:last-child { margin-bottom: 0; }
+  .empfehlung-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 3px 10px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+  }
+  .label-muss { background: #fee2e2; color: #991b1b; }
+  .label-sollte { background: #fef3c7; color: #92400e; }
+  .label-kann { background: #d1fae5; color: #065f46; }
+
+  /* ── Rohtext ── */
+  .rohtext-box {
+    background: #1e293b;
+    border-radius: 6px;
+    padding: 20px 24px;
+    overflow-x: auto;
+  }
+  .rohtext-box pre {
+    font-family: 'SF Mono', 'Fira Code', 'Courier New', monospace;
+    font-size: 12px;
+    color: #94a3b8;
+    white-space: pre-wrap;
+    word-break: break-word;
+    line-height: 1.7;
+  }
+
+  /* ── Footer ── */
+  .report-footer {
+    margin-top: 32px;
+    padding: 20px 0 0;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: gap;
+  }
+  .footer-brand {
+    font-size: 12px;
+    font-weight: 600;
+    color: #94a3b8;
+  }
+  .footer-date {
+    font-size: 12px;
+    color: #cbd5e1;
+  }
+
+  /* ── Print ── */
+  @media print {
+    body { background: white; }
+    .page { padding: 0; max-width: 100%; }
+    .report-header { border-radius: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .section { break-inside: avoid; box-shadow: none; }
+    .fristen-box { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .risk-item { -webkit-print-color-adjust: exact; print-color-adjust: exact; break-inside: avoid; }
+  }
+
+  @media (max-width: 600px) {
+    .report-header { padding: 24px 20px; }
+    .summary-card { padding: 20px; grid-template-columns: 1fr; }
+    .fristen-box { padding: 16px 20px; }
+    .section-body { padding: 16px 20px; }
+    .field-row { grid-template-columns: 1fr; gap: 2px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <div class="report-header">
+    <div class="header-top">
+      <div>
+        <div class="brand">Vertragsanalyse · Automatisiert</div>
+        <div class="report-title">SaaS Dienstleistungsvertrag Realistisch</div>
+      </div>
+      <span class="status-badge status-abgeschlossen">Abgeschlossen</span>
+    </div>
+    <div class="header-meta">
+      <div class="meta-item">
+        <span class="meta-label">Analysedatum</span>
+        <span class="meta-value">2026-04-17</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Seiten</span>
+        <span class="meta-value">5</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Analysiert mit</span>
+        <span class="meta-value">Vertragsmanagement-Workflow v2.0 (KI: Haiku 4.5 (günstig))</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Summary Card -->
+  <div class="summary-card">
+    <div class="summary-item">
+      <div class="summary-label">Auftraggeber / Partei A</div>
+      <div class="summary-value">Helios Medtech Solutions GmbH, München (HRB 248193), vertreten durch Dr. Sabine Hartwig und Jonas Krämer — **Auftraggeberin**</div>
+    </div>
+    <div class="summary-item">
+      <div class="summary-label">Vertragstyp</div>
+      <div class="summary-value">SaaS-Dienstleistungsvertrag mit Werkleistungselementen (Implementierung, Schulung, Wartung)</div>
+    </div>
+    <div class="summary-item">
+      <div class="summary-label">Auftragnehmer / Partei B</div>
+      <div class="summary-value">Nordlicht Cloud Services AG, Hamburg (HRB 165782), vertreten durch Vorstand Markus Bergmann — **Auftragnehmerin**</div>
+    </div>
+    <div class="summary-item">
+      <div class="summary-label">Vergütung / Vertragswert</div>
+      <div class="summary-value">- Monatliches Nutzungsentgelt: 4.850,00 EUR netto zzgl. USt. (§ 3 Abs. 1)</div>
+    </div>
+  </div>
+
+  <!-- Fristen Box -->
+  
+  <div class="fristen-box">
+    <div class="fristen-header">
+      <span class="fristen-icon">⏱</span>
+      <span class="fristen-title">Fristen &amp; Termine auf einen Blick</span>
+    </div>
+    <ul class="fristen-list">
+      <li class="frist-tag"><span class="frist-type">Datum</span>01.06.2026 (§ 2 Abs. 1)</li><li class="frist-tag"><span class="frist-type">Laufzeit</span>- Mindestlaufzeit: 36 Monate, endet 31.05.2029 (§ 2 Abs. 1)</li><li class="frist-tag"><span class="frist-type">Kündigung</span>6 Monate zum Ende der jeweiligen Verlängerungsperiode (§ 8 Abs. 2); frühestens nach Ablauf der Mindestlaufzeit (31.05.2029), daher frühestmöglicher Kündigungstermin 30.11.2029</li><li class="frist-tag"><span class="frist-type">A.o. Kündigung</span>- Wichtige Gründe gemäß § 9 Abs. 1: (a) Verstoß gegen wesentliche Vertragspflichten nicht innerhalb 30 Tagen nach Abmahnung beseitigt, (b) Zahlungsverzug über zwei Monatsentgelte, (c) Insolvenz, (d) Verfügbarkeit unter 97 % in drei aufeinanderfolgenden Kalendermonaten</li><li class="frist-tag"><span class="frist-type">Weitere</span>- Zahlungsfrist Rechnungen: innerhalb 14 Tagen nach Zugang (§ 3 Abs. 3)</li>
+    </ul>
+  </div>
+
+  <!-- Sections -->
+  
+  <div class="section">
+    <div class="section-header">
+      <span class="section-number">1</span>
+      <span class="section-title">Vertragsparteien</span>
+    </div>
+    <div class="section-body">
+      <div class="field-row">
+        <span class="field-label">Partei A (Auftraggeber)</span>
+        <span class="field-value">Helios Medtech Solutions GmbH, München (HRB 248193), vertreten durch Dr. Sabine Hartwig und Jonas Krämer — **Auftraggeberin**</span>
+      </div>
+      <div class="field-row">
+        <span class="field-label">Partei B (Auftragnehmer)</span>
+        <span class="field-value">Nordlicht Cloud Services AG, Hamburg (HRB 165782), vertreten durch Vorstand Markus Bergmann — **Auftragnehmerin**</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <span class="section-number">2</span>
+      <span class="section-title">Vertragstyp &amp; Gegenstand</span>
+    </div>
+    <div class="section-body">
+      <div class="field-row">
+        <span class="field-label">Vertragstyp (BGB)</span>
+        <span class="field-value">SaaS-Dienstleistungsvertrag mit Werkleistungselementen (Implementierung, Schulung, Wartung)</span>
+      </div>
+      <div class="field-row">
+        <span class="field-label">Leistungsgegenstand</span>
+        <span class="field-value">Bereitstellung cloudbasierter Software „MediSecure Vault" zur Verwaltung, Speicherung und Analyse medizinischer Dokumente (§ 1 Abs. 1) plus Implementierungs-, Schulungs- und Wartungsleistungen (§ 1 Abs. 2) gemäß Anlagen 1 und 2 (SLA)</span>
+      </div>
+      <div class="field-row">
+        <span class="field-label">Vergütung / Wert</span>
+        <span class="field-value">- Monatliches Nutzungsentgelt: 4.850,00 EUR netto zzgl. USt. (§ 3 Abs. 1)</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <span class="section-number">3</span>
+      <span class="section-title">Laufzeit &amp; Fristen</span>
+    </div>
+    <div class="section-body">
+      <div class="field-row">
+        <span class="field-label">Vertragsbeginn</span>
+        <span class="field-value">01.06.2026 (§ 2 Abs. 1)</span>
+      </div>
+      <div class="field-row">
+        <span class="field-label">Vertragsende / Laufzeit</span>
+        <span class="field-value">- Mindestlaufzeit: 36 Monate, endet 31.05.2029 (§ 2 Abs. 1)</span>
+      </div>
+      <div class="field-row">
+        <span class="field-label">Ordentliche Kündigung</span>
+        <span class="field-value">6 Monate zum Ende der jeweiligen Verlängerungsperiode (§ 8 Abs. 2); frühestens nach Ablauf der Mindestlaufzeit (31.05.2029), daher frühestmöglicher Kündigungstermin 30.11.2029</span>
+      </div>
+      <div class="field-row">
+        <span class="field-label">Außerordentliche Kündigung</span>
+        <span class="field-value">- Wichtige Gründe gemäß § 9 Abs. 1: (a) Verstoß gegen wesentliche Vertragspflichten nicht innerhalb 30 Tagen nach Abmahnung beseitigt, (b) Zahlungsverzug über zwei Monatsentgelte, (c) Insolvenz, (d) Verfügbarkeit unter 97 % in drei aufeinanderfolgenden Kalendermonaten</span>
+      </div>
+      <div class="field-row">
+        <span class="field-label">Weitere Fristen</span>
+        <span class="field-value">- Zahlungsfrist Rechnungen: innerhalb 14 Tagen nach Zugang (§ 3 Abs. 3)</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <span class="section-number">4</span>
+      <span class="section-title">Kernpflichten</span>
+    </div>
+    <div class="section-body">
+      <div class="subsection-title">Pflichten Partei A</div>
+      <ul class="content-list"><li class="empty-item" style="color:#cbd5e1;font-style:italic;">Nicht angegeben</li></ul>
+      <div class="subsection-title">Pflichten Partei B</div>
+      <ul class="content-list"><li class="empty-item" style="color:#cbd5e1;font-style:italic;">Nicht angegeben</li></ul>
+      <div class="subsection-title">Relevante Nebenpflichten</div>
+      <ul class="content-list"><li><strong>Datensicherung:</strong> Auftraggeberin trägt Verantwortung für ordnungsgemäße und regelmäßige Datensicherung; Haftung für Datenverlust begrenzt auf Umfang, in dem Verluste auch bei ordnungsgemäßer Sicherung entstanden wären (§ 7 Abs. 4)</li>
+<li><strong>Schriftformerfordernis:</strong> Alle Kündigungen und Änderungen bedürfen Schriftform gem. § 126 BGB (Fax oder elektronisch signiertes PDF ausreichend, E-Mail ohne qualifizierte Signatur nicht) (§ 8 Abs. 3, § 12 Abs. 1)</li>
+<li><strong>Änderungsvertrag:</strong> Änderungen und Ergänzungen bedürfen Schriftform; mündliche Nebenabreden ausgeschlossen (§ 12)</li>
+<li>---</li></ul>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <span class="section-number">5</span>
+      <span class="section-title">Rechtliche Risiken &amp; Auffälligkeiten</span>
+    </div>
+    <div class="section-body">
+      <div class="risk-item">### Kritische Risiken: 1. <strong>Haftungsbegrenzung (§ 7 Abs. 2–3):</strong></div>
+<div class="risk-item">Für leichte Fahrlässigkeit nur bei Verletzung von Kardinalpflichten Haftung; pro Schadensereignis max. 250.000 EUR, je Jahr max. 500.000 EUR</div>
+<div class="risk-item medium"><strong>Medizinische Daten:</strong> Als Auftraggeberin im Gesundheitswesen erhebliches Risiko bei Datenverlust/Sicherheitsvorfällen trotz SLA 99,5 % → keine vollständige Kompensation möglich</div>
+<div class="risk-item">Ausschluss Folgeschäden und entgangener Gewinn (§ 7 Abs. 3) könnte bei Systemausfällen existenzbedrohend sein 2. <strong>Datenverlust-Haftungsausschluss (§ 7 Abs. 4):</strong></div>
+<div class="risk-item">Haftung nur „in dem Umfang, in dem auch bei ordnungsgemäßer und regelmäßiger Datensicherung durch die Auftraggeberin Datenverluste entstanden wären"</div>
+<div class="risk-item medium"><strong>Beweislastproblem:</strong> Auftraggeberin muss nachweisen, dass SLA-konforme Sicherung vorlag → Risiko für Auftraggeberin</div>
+<div class="risk-item medium">Unklarheit: Wer definiert „ordnungsgemäß"? 3. <strong>Pilotbetrieb-Fallstricke (§ 2 Abs. 3):</strong></div>
+<div class="risk-item medium">Mitteilungsfrist bis 15.09.2026 nicht eingehalten → automatische Aufnahme Produktivbetrieb</div>
+<div class="risk-item medium"><strong>Rechtliche Folge:</strong> Bindung an 36-Monate-Mindestlaufzeit auch ohne formale Akzeptanz</div>
+<div class="risk-item medium">Auftraggeberin muss aktiv mitteilen, sonst gilt Produktivbetrieb als angenommen — es gibt keine Opt-out, nur implizite Zustimmung durch Untätigkeit 4. <strong>Preisanpassungsrecht (§ 3 Abs. 4):</strong></div>
+<div class="risk-item medium">Unilaterales Anpassungsrecht Auftragnehmerin: 3 Monate Vorankündigung, ab Mindestlaufzeit, maximal jährlich nach VPI</div>
+<div class="risk-item medium"><strong>Problem:</strong> In der ersten Tranche (01.06.2026–31.05.2029) können Preise bis zu 3 Mal angepasst werden</div>
+<div class="risk-item medium">Keine Obergrenze außer VPI genannt — könnte bei hoher Inflation erheblich sein</div>
+<div class="risk-item medium">Auftraggeberin kann während Mindestlaufzeit nicht kündigen, somit Anpassungszwang 5. <strong>SLA-Verfügbarkeit und Außerkündigung (§ 4 Abs. 1 und § 9 Abs. 1 d):</strong></div>
+<div class="risk-item medium">Außerordentliche Kündigung möglich, wenn Verfügbarkeit in 3 aufeinanderfolgenden Kalendermonaten unter 97 % liegt</div>
+<div class="risk-item medium"><strong>Aber:</strong> SLA garantiert nur 99,5 % → nicht automatisch Verfügbarkeit über 97 % in jedem Monat</div>
+<div class="risk-item medium">Gutschrift bei Unterschreitung (§ 4 Abs. 4): max. 50 % eines Monatsentgelts (ca. 2.425 EUR) — wirtschaftlich unbedeutend bei Systemausfällen 6. <strong>Datenschutz-Verarbeitungsstandort:</strong></div>
+<div class="risk-item medium">§ 5 Abs. 2 regelt nur EU-Verarbeitung; Drittland nur mit vorheriger schriftlicher Zustimmung</div>
+<div class="risk-item medium"><strong>Lücke:</strong> Keine Regelung für Sub-Prozessoren oder Cloud-Infrastruktur-Provider (z.B. Standorte der Server-Hardware)</div>
+<div class="risk-item medium">AVV (Anlage 4) ist nur angekündigt, nicht beigefügt → Risiko unbekannter Verarbeitungsbedingungen 7. <strong>Schriftformerfordernis für Kündigung (§ 8 Abs. 3):</strong></div>
+<div class="risk-item medium">E-Mail ohne qualifizierte elektronische Signatur genügt nicht</div>
+<div class="risk-item"><strong>Praxisrisiko:</strong> Kündigungen per E-Mail könnten unwirksam sein → ungewollte Verlängerung</div>
+<div class="risk-item medium">Fax ist zulässig, aber Faxgeräte sind selten; electronic signature mit PDF ist praktikabel 8. <strong>Gewährleistung und Mängelrechte nicht definiert:</strong></div>
+<div class="risk-item medium">Vertrag schweigt zu Gewährleistungsrechten für die SaaS-Software selbst</div>
+<div class="risk-item medium">AGB (Anlage 3) gelten „soweit dieser Vertrag keine abweichenden Regelungen enthält" (§ 1 Abs. 3)</div>
+<div class="risk-item medium"><strong>Risiko:</strong> AGB könnten Gewährleistung ausschließen oder stark einschränken; nicht einsehbar 9. <strong>Implementierungsraten und Risiken (§ 3 Abs. 2):</strong></div>
+<div class="risk-item medium">40% nach „Systemintegration", 20% nach „erfolgreicher Abnahme"</div>
+<div class="risk-item medium"><strong>Unklarheit:</strong> Wer entscheidet über „erfolgreiche Abnahme"? Keine Abnahmefrist oder Abnahmeverfahren definiert</div>
+<div class="risk-item medium">Auftraggeberin könnte unbegrenzt Abnahme verweigern und Zahlung zurückhalten 10. <strong>Mitwirkungsmehrkosten (§ 6 Abs. 3):</strong></div>
+<div class="risk-item medium">Auftragnehmerin kann Mehraufwand nach Aufwand berechnen bei Nichterfüllung Mitwirkungspflichten</div>
+<div class="risk-item"><strong>Problem:</strong> Keine Preisliste oder Stundensätze definiert; „nach Aufwand" ist unbestimmt (§ 307 BGB Umdeutungsrisiko)</div>
+<div class="risk-item medium">Auftraggeberin könnte unbegrenzte Kosten entstehen ### Auffälligkeiten / Mittlere Risiken: 11. <strong>Automatische Verlängerung (§ 2 Abs. 2):</strong></div>
+<div class="risk-item medium">Vertrag verlängert sich um 12 Monate, wenn nicht 6 Monate vor Ablauf schriftlich gekündigt wird</div>
+<div class="risk-item medium"><strong>Verwaltungsaufwand:</strong> Auftraggeberin muss selbst aktiv kündigen; Kalenderangabe: bis spätestens 30.11.2029 (für 31.05.2029 Ablauf) 12. <strong>Wartungsfenster und Verfügbarkeit (§ 4 Abs. 2):</strong></div>
+<div class="risk-item medium">Wartungsfenster regelmäßig sonntags 02:00–06:00 Uhr</div>
+<div class="risk-item medium">Medizinische Software könnte zu jeder Tageszeit benötigt werden → potenzielle Betriebsstörungen</div>
+<div class="risk-item medium">99,5 % Verfügbarkeit schließt Wartung aus, aber Notfall-Patches ausgeschlossen? 13. <strong>Geistige Eigentumsrechte und Individualentwicklungen (§ 11):</strong></div>
+<div class="risk-item medium">Individualentwicklungen gehen bei vollständiger Zahlung in Eigentum Auftraggeberin über (§ 11 Abs. 3)</div>
+<div class="risk-item medium"><strong>Aber:</strong> „Vorbestehende Komponenten der Auftragnehmerin bleiben ausgenommen" — Abgrenzung unklar</div>
+<div class="risk-item medium">Auftraggeberin könnte verbrauchte Individualentwicklung, die auf bestehenden Komponenten basiert, nicht nutzen 14. <strong>Insolvenz während Mindestlaufzeit (§ 9 Abs. 1 c):</strong></div>
+<div class="risk-item medium">Außerordentliche Kündigung möglich bei Insolvenz Auftragnehmerin</div>
+<div class="risk-item medium"><strong>Aber:</strong> Während Mindestlaufzeit keine ordentliche Kündigung (§ 8 Abs. 1)</div>
+<div class="risk-item medium">Wenn Auftraggeberin insolvent wird: kein Kündigungsrecht für Auftragnehmerin außerordentlich erwähnt — nur Forderungsausfall-Risiko 15. <strong>Gerichtsstand München (§ 13 Abs. 1):</strong></div>
+<div class="risk-item medium">Ausschließlich München, aber nur „sofern die Auftraggeberin Kaufmann im Sinne des HGB ist"</div>
+<div class="risk-item medium"><strong>Problem:</strong> Wenn Auftraggeberin nicht als Kaufmann eingestuft wird (z.B. Freiberufler), ist Gerichtsstand unklar</div>
+<div class="risk-item medium">Auftragnehmerin sitzt in Hamburg — keine Regelung für nicht-Kaufleute ### Minimale Risiken / Standardregelungen: 16. <strong>AVV und DSGVO-Konformität:</strong></div>
+<div class="risk-item medium">§ 5 Abs. 1 verweist auf AVV (Anlage 4), die nicht beigefügt ist</div>
+<div class="risk-item medium">Standard DSGVO-Anforderungen erwähnt (Art. 28, 44 ff.), aber Eigentümer medizinischer Daten trägt DSGVO-Hauptverantwortung</div>
+<div class="risk-item medium">Datensicherheit: Keine konkreten technischen/organisatorischen Maßnahmen (TOM) definiert 17. <strong>Erfüllungsort (§ 13 Abs. 1):</strong></div>
+<div class="risk-item medium">München ist Erfüllungsort und ausschließlicher Gerichtsstand</div>
+<div class="risk-item medium">Cloud-basierte Software: Erfüllungsort ist praktisch überall und nirgendwo — aber vertraglich geklärt ---</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <span class="section-number">6</span>
+      <span class="section-title">Handlungsempfehlungen</span>
+    </div>
+    <div class="section-body">
+      <div class="empfehlung-gruppe">
+        <div class="empfehlung-label label-muss">⛔ Muss – vor Unterzeichnung</div>
+        <ul class="content-list"><li class="empty-item" style="color:#cbd5e1;font-style:italic;">Nicht angegeben</li></ul>
+      </div>
+      <div class="empfehlung-gruppe">
+        <div class="empfehlung-label label-sollte">⚠ Sollte – empfohlen</div>
+        <ul class="content-list"><li class="empty-item" style="color:#cbd5e1;font-style:italic;">Nicht angegeben</li></ul>
+      </div>
+      <div class="empfehlung-gruppe">
+        <div class="empfehlung-label label-kann">✓ Kann – optional</div>
+        <ul class="content-list"><li class="empty-item" style="color:#cbd5e1;font-style:italic;">Nicht angegeben</li></ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <span class="section-number">7</span>
+      <span class="section-title">Rohtext (Quelle)</span>
+    </div>
+    <div class="section-body">
+      <div class="rohtext-box">
+        <pre>[Seite 1]
+SOFTWARE- UND DIENSTLEISTUNGSVERTRAG
+Vertragsnummer: SDV-2026-0417-1138
+Abgeschlossen zwischen:
+Helios Medtech Solutions GmbH, eingetragen im Handelsregister des Amtsgerichts München
+unter HRB 248193, Geschäftsanschrift: Nymphenburger Straße 86, 80636 München, vertreten
+durch die Geschäftsführer Dr. Sabine Hartwig und Jonas Krämer — nachfolgend
+„Auftraggeberin“ genannt —
+und
+Nordlicht Cloud Services AG, eingetragen im Handelsregister des Amtsgerichts Hamburg unter
+HRB 165782, Geschäftsanschrift: Alstertor 9, 20095 Hamburg, vertreten durch den Vorstand
+Markus Bergmann — nachfolgend „Auftragnehmerin“ genannt —
+— Auftraggeberin und Auftragnehmerin nachfolgend einzeln „Partei“, gemeinsam „Parteien“ —
+§ 1 Vertragsgegenstand
+(1) Die Auftragnehmerin stellt der Auftraggeberin die cloudbasierte Software „MediSecure Vault“
+(nachfolgend „Software“) zur Verwaltung, Speicherung und Analyse medizinischer Dokumente
+gemäß Leistungsbeschreibung in Anlage 1 zur Verfügung.
+(2) Zusätzlich erbringt die Auftragnehmerin Implementierungs-, Schulungs- und
+Wartungsleistungen nach Maßgabe der Anlage 2 (Service Level Agreement — SLA).
+(3) Ergänzend gelten die Allgemeinen Geschäftsbedingungen der Auftragnehmerin in der Fassung
+vom 01.02.2026 (Anlage 3), soweit dieser Vertrag keine abweichenden Regelungen enthält. Im
+Falle von Widersprüchen gehen die Regelungen dieses Vertrages den AGB vor.
+§ 2 Laufzeit
+(1) Der Vertrag beginnt am 01.06.2026 (Vertragsbeginn) und wird auf eine Mindestlaufzeit von 36
+Monaten abgeschlossen. Die Mindestlaufzeit endet mit Ablauf des 31.05.2029.
+(2) Der Vertrag verlängert sich nach Ablauf der Mindestlaufzeit automatisch jeweils um weitere 12
+Monate, sofern er nicht mit einer Frist von 6 Monaten zum Ablauf der jeweiligen Laufzeit
+schriftlich gekündigt wird.
+(3) Der Pilotbetrieb gemäß Anlage 1 Ziffer 4 endet am 31.08.2026. Bis spätestens 15.09.2026 teilt
+die Auftraggeberin schriftlich mit, ob sie den Produktivbetrieb aufnimmt. Unterbleibt diese
+Mitteilung, gilt der Produktivbetrieb als aufgenommen.
+§ 3 Vergütung und Zahlungsbedingungen
+(1) Die Auftraggeberin zahlt für die Nutzung der Software ein monatliches Entgelt von 4.850,00
+EUR netto zzgl. der jeweils geltenden gesetzlichen Umsatzsteuer.
+(2) Die einmalige Implementierungspauschale beträgt 18.500,00 EUR netto und wird in drei Raten
+fällig: 40 % bei Vertragsunterzeichnung, 40 % nach Abschluss der Systemintegration, 20 % nach
+erfolgreicher Abnahme.
+(3) Rechnungen sind innerhalb von 14 Tagen nach Zugang ohne Abzug zur Zahlung fällig. Bei
+Zahlungsverzug schuldet die Auftraggeberin Verzugszinsen in Höhe von 9 Prozentpunkten über
+dem Basiszinssatz (§ 288 Abs. 2 BGB).
+
+[Seite 2]
+(4) Die Auftragnehmerin ist berechtigt, die monatlichen Entgelte mit einer Vorankündigungsfrist von
+3 Monaten, erstmals nach Ablauf der Mindestlaufzeit, einmal jährlich um bis zu maximal die
+Steigerung des Verbraucherpreisindex (VPI, Basis 2020=100) anzupassen.
+
+[Seite 3]
+§ 4 Service Level Agreement (SLA)
+(1) Die Auftra
+
+[... gekürzt – vollständiger Text unten ...]</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="report-footer">
+    <span class="footer-brand">Vertragsmanagement · KI-Analyse</span>
+    <span class="footer-date">Erstellt 17.04.2026</span>
+  </div>
+
+</div>
+</body>
+</html>

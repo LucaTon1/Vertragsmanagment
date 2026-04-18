@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vertragsmanagement – KI-gestützte Vertragsanalyse</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 15px; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    background: #f0f2f5;
+    color: #1a1a2e;
+    line-height: 1.65;
+  }
+  .page { max-width: 860px; margin: 0 auto; padding: 32px 16px 64px; }
+
+  /* Header */
+  .hero {
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+    color: white;
+    border-radius: 12px;
+    padding: 48px 48px 40px;
+    margin-bottom: 24px;
+  }
+  .hero-tag {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.45);
+    margin-bottom: 12px;
+  }
+  .hero-title {
+    font-size: 32px;
+    font-weight: 800;
+    letter-spacing: -0.8px;
+    line-height: 1.15;
+    margin-bottom: 10px;
+  }
+  .hero-tagline {
+    font-size: 16px;
+    color: rgba(255,255,255,0.7);
+    margin-bottom: 24px;
+  }
+  .hero-contact {
+    display: inline-block;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 6px;
+    padding: 8px 16px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.8);
+    text-decoration: none;
+  }
+
+  /* Cards */
+  .card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 28px 32px;
+    margin-bottom: 16px;
+  }
+  .card-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #94a3b8;
+    margin-bottom: 16px;
+  }
+
+  /* Problem */
+  .problem-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 8px;
+  }
+  .problem-item {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-left: 3px solid #ef4444;
+    border-radius: 6px;
+    padding: 14px 16px;
+  }
+  .problem-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #991b1b;
+    margin-bottom: 4px;
+  }
+  .problem-text {
+    font-size: 14px;
+    color: #374151;
+    line-height: 1.5;
+  }
+  .problem-amount {
+    font-size: 22px;
+    font-weight: 800;
+    color: #dc2626;
+    display: block;
+    margin-bottom: 2px;
+  }
+
+  /* Lösung */
+  .solution-list { list-style: none; margin: 0; padding: 0; }
+  .solution-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid #f1f5f9;
+    font-size: 14px;
+    color: #374151;
+  }
+  .solution-list li:last-child { border-bottom: none; }
+  .solution-icon {
+    width: 28px;
+    height: 28px;
+    background: #1e3a5f;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  /* Zahlen */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-top: 8px;
+  }
+  .stat-item {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-top: 3px solid #1e3a5f;
+    border-radius: 8px;
+    padding: 16px 14px;
+    text-align: center;
+  }
+  .stat-value {
+    font-size: 26px;
+    font-weight: 800;
+    color: #0f172a;
+    display: block;
+    line-height: 1.1;
+    margin-bottom: 4px;
+  }
+  .stat-label {
+    font-size: 11px;
+    color: #64748b;
+    line-height: 1.4;
+  }
+  .stat-sub {
+    font-size: 11px;
+    color: #94a3b8;
+    margin-top: 4px;
+    display: block;
+  }
+
+  /* Preistabelle */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px;
+    font-size: 14px;
+  }
+  thead tr {
+    background: #0f172a;
+    color: white;
+  }
+  thead th {
+    padding: 10px 16px;
+    text-align: left;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+  tbody tr { border-bottom: 1px solid #f1f5f9; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: #f8fafc; }
+  tbody td { padding: 12px 16px; color: #374151; vertical-align: top; }
+  .plan-name { font-weight: 700; color: #1e3a5f; font-size: 15px; }
+  .plan-price { font-weight: 700; color: #0f172a; }
+  .plan-highlight { background: #eff6ff; }
+  .plan-highlight .plan-name { color: #1d4ed8; }
+
+  /* CTA */
+  .cta-box {
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+    color: white;
+    border-radius: 10px;
+    padding: 32px;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+  .cta-title { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+  .cta-sub { font-size: 14px; color: rgba(255,255,255,0.7); margin-bottom: 20px; }
+  .cta-btn {
+    display: inline-block;
+    background: white;
+    color: #1e3a5f;
+    font-weight: 700;
+    font-size: 14px;
+    padding: 12px 28px;
+    border-radius: 6px;
+    text-decoration: none;
+  }
+
+  /* Disclaimer */
+  .disclaimer {
+    font-size: 11px;
+    color: #94a3b8;
+    text-align: center;
+    padding: 0 16px;
+    line-height: 1.6;
+  }
+
+  @media print {
+    body { background: white; }
+    .page { padding: 0; max-width: 100%; }
+    .hero { border-radius: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .card { break-inside: avoid; }
+    .cta-box { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .stat-item { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    thead tr { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  }
+
+  @media (max-width: 640px) {
+    .hero { padding: 28px 24px; }
+    .problem-grid { grid-template-columns: 1fr; }
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+    .card { padding: 20px 18px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-tag">Vertragsmanagement · KI-Lösung für den Mittelstand</div>
+    <div class="hero-title">Verträge analysieren in 30 Sekunden –<br>statt in 4 Stunden.</div>
+    <div class="hero-tagline">Automatische Risikoerkennung, Fristextraktion und Handlungsempfehlungen –<br>für einen Bruchteil der Anwaltskosten.</div>
+    <a class="hero-contact" href="mailto:gianlucalanger04@gmail.com">gianlucalanger04@gmail.com</a>
+  </div>
+
+  <!-- Problem -->
+  <div class="card">
+    <div class="card-title">Das Problem – Was kostet manuelle Vertragsprüfung?</div>
+    <div class="problem-grid">
+      <div class="problem-item">
+        <div class="problem-label">Anwaltskosten</div>
+        <span class="problem-amount">300–1.200 €</span>
+        <div class="problem-text">pro Vertrag. Anwalt: 150–300 €/h, Erstcheck 2–4 Stunden. Für 10 Verträge/Monat: bis zu <strong>12.000 € jährlich</strong>.</div>
+      </div>
+      <div class="problem-item">
+        <div class="problem-label">Verpasste Fristen</div>
+        <span class="problem-amount">Teuer.</span>
+        <div class="problem-text">Automatische Vertragsverlängerung um 12 Monate durch versäumte Kündigung. Versteckte Klauseln, die erst im Streitfall auffallen.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lösung -->
+  <div class="card">
+    <div class="card-title">Die Lösung – Was das System tut</div>
+    <ul class="solution-list">
+      <li>
+        <span class="solution-icon">1</span>
+        <span><strong>PDF hochladen, Analyse erhalten:</strong> Das System extrahiert automatisch alle relevanten Felder (Parteien, Laufzeit, Vergütung, Fristen) und bewertet rechtliche Risiken in unter 30 Sekunden.</span>
+      </li>
+      <li>
+        <span class="solution-icon">2</span>
+        <span><strong>Fristen-Monitoring:</strong> Automatischer E-Mail-Reminder bei ablaufenden Kündigungsfristen und Vertragsenden – kein Termin wird mehr verpasst.</span>
+      </li>
+      <li>
+        <span class="solution-icon">3</span>
+        <span><strong>Professionelle Reports:</strong> Strukturierte HTML- und Word-Dokumente mit Risikoklassifizierung und konkreten Handlungsempfehlungen – sofort weiterverwendbar.</span>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Zahlen -->
+  <div class="card">
+    <div class="card-title">Reale Testzahlen – SaaS-Vertrag, 5 Seiten (17.04.2026)</div>
+    <div class="stats-grid">
+      <div class="stat-item">
+        <span class="stat-value">100 %</span>
+        <span class="stat-label">Datenextraktion<br>16/16 Felder korrekt</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value">~4 Ct.</span>
+        <span class="stat-label">Kosten pro Vertrag<br>(~0,05 USD API)</span>
+        <span class="stat-sub">100 Verträge/Monat ≈ 4,60 €</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value">30 Sek.</span>
+        <span class="stat-label">Analysezeit<br>Haiku 4.5 Modell</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value">37</span>
+        <span class="stat-label">Erkannte Punkte<br>10 krit. + 7 mittel + 20 Empf.</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Preise -->
+  <div class="card">
+    <div class="card-title">Leistungspakete</div>
+    <table>
+      <thead>
+        <tr>
+          <th>Paket</th>
+          <th>Einmalig</th>
+          <th>Monatlich</th>
+          <th>Umfang</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="plan-name">Starter</span></td>
+          <td><span class="plan-price">1.500 €</span></td>
+          <td>300 €/Monat</td>
+          <td>bis 20 Verträge/Monat, E-Mail-Support</td>
+        </tr>
+        <tr class="plan-highlight">
+          <td><span class="plan-name">Professional</span> ★</td>
+          <td><span class="plan-price">3.000 €</span></td>
+          <td>500 €/Monat</td>
+          <td>bis 100 Verträge/Monat, Fristen-Reminder, DOCX-Export</td>
+        </tr>
+        <tr>
+          <td><span class="plan-name">Enterprise</span></td>
+          <td><span class="plan-price">5.000 €</span></td>
+          <td>800 €/Monat</td>
+          <td>unbegrenzt + API-Zugang + individuelle Anpassungen</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-box">
+    <div class="cta-title">Kostenloses Pilotprojekt</div>
+    <div class="cta-sub">Wir analysieren Ihre ersten 5 Verträge kostenlos – damit Sie sehen, was das System leistet.</div>
+    <a class="cta-btn" href="mailto:gianlucalanger04@gmail.com">Jetzt anfragen: gianlucalanger04@gmail.com</a>
+  </div>
+
+  <!-- Disclaimer -->
+  <p class="disclaimer">
+    Dieses Tool unterstützt juristische Erstprüfung. Es ersetzt keine anwaltliche Beratung.<br>
+    Vertragsmanagement v2.0 · Powered by Claude AI (Anthropic) · Stand April 2026
+  </p>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 tools/batch_vertragsanalyse.py .tmp/test_vertraege/)",
+      "Bash(rm \"/Users/gianluca/Documents/CLAUDE/Projects/1. AI Workflow/CLAUDE \\(1\\).md\")",
+      "Bash(rm -rf \"/Users/gianluca/Documents/CLAUDE/Projects/1. AI Workflow/MEMORY\")",
+      "Bash(rm -f test_vertrag.pdf)",
+      "Bash(rm -f vertragsanalyse_test_vertrag_20260415.md)",
+      "Bash(rm -f vertragsanalyse_01_dienstleistungsvertrag_20260416_152736.md)",
+      "Bash(rm -f \"CLAUDE \\(1\\).md\")",
+      "Bash(mkdir -p prompts)",
+      "Bash(mv STUFE1_BATCH_PROMPT.md prompts/)",
+      "Bash(mv VERTRAGSMANAGEMENT_PROMPT.md prompts/)",
+      "Bash(mkdir -p archiv)",
+      "Bash(python tools/vertrags_datenbank.py --preview)",
+      "Bash(python3 tools/vertrags_datenbank.py --preview)",
+      "Bash(python3 tools/vertrags_datenbank.py)"
+    ]
+  }
+}

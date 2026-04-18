@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vertragsanalyse: Mietvertrag</title>
+<style>
+  /* ── Reset & Base ── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 15px; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+    background: #f0f2f5;
+    color: #1a1a2e;
+    line-height: 1.65;
+  }
+
+  /* ── Layout ── */
+  .page { max-width: 900px; margin: 0 auto; padding: 24px 16px 64px; }
+
+  /* ── Header ── */
+  .report-header {
+    background: linear-gradient(135deg, #0f172a 0%, #1e3a5f 100%);
+    color: white;
+    border-radius: 12px 12px 0 0;
+    padding: 36px 40px 32px;
+    margin-bottom: 0;
+    position: relative;
+    overflow: hidden;
+  }
+  .report-header::after {
+    content: '';
+    position: absolute;
+    top: -40px; right: -40px;
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.04);
+  }
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 20px;
+  }
+  .brand {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+    margin-bottom: 8px;
+  }
+  .report-title {
+    font-size: 26px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: white;
+    line-height: 1.2;
+  }
+  .status-badge {
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+    flex-shrink: 0;
+    margin-left: 16px;
+  }
+  .status-abgeschlossen { background: #10b981; color: white; }
+  .status-bearbeitung { background: #f59e0b; color: white; }
+  .header-meta {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .meta-item {
+    display: flex;
+    flex-direction: column;
+  }
+  .meta-label {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: rgba(255,255,255,0.4);
+    margin-bottom: 2px;
+  }
+  .meta-value {
+    font-size: 13px;
+    color: rgba(255,255,255,0.85);
+    font-weight: 500;
+  }
+
+  /* ── Summary Card ── */
+  .summary-card {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-top: none;
+    padding: 28px 40px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px 48px;
+    margin-bottom: 0;
+  }
+  .summary-item { }
+  .summary-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #94a3b8;
+    margin-bottom: 4px;
+  }
+  .summary-value {
+    font-size: 14px;
+    font-weight: 600;
+    color: #1e293b;
+  }
+  .summary-value.empty { color: #cbd5e1; font-style: italic; font-weight: 400; }
+
+  /* ── Fristen Box ── */
+  .fristen-box {
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    border-left: 4px solid #f59e0b;
+    border-top: none;
+    padding: 20px 40px;
+    margin-bottom: 20px;
+  }
+  .fristen-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .fristen-icon { font-size: 16px; }
+  .fristen-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: #92400e;
+  }
+  .fristen-list {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .frist-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: white;
+    border: 1px solid #fcd34d;
+    border-radius: 6px;
+    padding: 4px 10px;
+    font-size: 12.5px;
+    color: #78350f;
+    font-weight: 500;
+  }
+  .frist-tag .frist-type {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #b45309;
+    background: #fef3c7;
+    padding: 1px 5px;
+    border-radius: 3px;
+  }
+
+  /* ── Section Cards ── */
+  .section {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    overflow: hidden;
+  }
+  .section-header {
+    padding: 16px 28px;
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #fafbfc;
+  }
+  .section-number {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    background: #1e3a5f;
+    color: white;
+    font-size: 12px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+  .section-title {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #334155;
+  }
+  .section-body {
+    padding: 24px 28px;
+  }
+
+  /* ── Content Styles ── */
+  .field-row {
+    display: grid;
+    grid-template-columns: 180px 1fr;
+    gap: 8px 16px;
+    margin-bottom: 10px;
+    align-items: baseline;
+  }
+  .field-row:last-child { margin-bottom: 0; }
+  .field-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #64748b;
+    padding-top: 1px;
+  }
+  .field-value {
+    font-size: 14px;
+    color: #1e293b;
+  }
+  .field-value.empty { color: #cbd5e1; font-style: italic; }
+
+  .subsection-title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: #64748b;
+    margin: 20px 0 10px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid #f1f5f9;
+  }
+  .subsection-title:first-child { margin-top: 0; }
+
+  p, .text-content {
+    font-size: 14px;
+    color: #374151;
+    line-height: 1.7;
+    margin-bottom: 8px;
+  }
+  p:last-child { margin-bottom: 0; }
+
+  ul.content-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  ul.content-list li {
+    font-size: 14px;
+    color: #374151;
+    padding: 5px 0 5px 20px;
+    position: relative;
+    border-bottom: 1px solid #f8fafc;
+    line-height: 1.6;
+  }
+  ul.content-list li:last-child { border-bottom: none; }
+  ul.content-list li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: #94a3b8;
+    font-size: 12px;
+    top: 6px;
+  }
+
+  /* ── Risiken Section ── */
+  .risk-item {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-left: 3px solid #ef4444;
+    border-radius: 6px;
+    padding: 12px 16px;
+    margin-bottom: 10px;
+    font-size: 14px;
+    color: #374151;
+    line-height: 1.6;
+  }
+  .risk-item:last-child { margin-bottom: 0; }
+  .risk-item.medium {
+    background: #fffbeb;
+    border-color: #fde68a;
+    border-left-color: #f59e0b;
+  }
+  .risk-empty {
+    color: #94a3b8;
+    font-style: italic;
+    font-size: 14px;
+  }
+
+  /* ── Empfehlungen ── */
+  .empfehlung-gruppe { margin-bottom: 20px; }
+  .empfehlung-gruppe:last-child { margin-bottom: 0; }
+  .empfehlung-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 3px 10px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+  }
+  .label-muss { background: #fee2e2; color: #991b1b; }
+  .label-sollte { background: #fef3c7; color: #92400e; }
+  .label-kann { background: #d1fae5; color: #065f46; }
+
+  /* ── Rohtext ── */
+  .rohtext-box {
+    background: #1e293b;
+    border-radius: 6px;
+    padding: 20px 24px;
+    overflow-x: auto;
+  }
+  .rohtext-box pre {
+    font-family: 'SF Mono', 'Fira Code', 'Courier New', monospace;
+    font-size: 12px;
+    color: #94a3b8;
+    white-space: pre-wrap;
+    word-break: break-word;
+    line-height: 1.7;
+  }
+
+  /* ── Footer ── */
+  .report-footer {
+    margin-top: 32px;
+    padding: 20px 0 0;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: gap;
+  }
+  .footer-brand {
+    font-size: 12px;
+    font-weight: 600;
+    color: #94a3b8;
+  }
+  .footer-date {
+    font-size: 12px;
+    color: #cbd5e1;
+  }
+
+  /* ── Print ── */
+  @media print {
+    body { background: white; }
+    .page { padding: 0; max-width: 100%; }
+    .report-header { border-radius: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .section { break-inside: avoid; box-shadow: none; }
+    .fristen-box { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .risk-item { -webkit-print-color-adjust: exact; print-color-adjust: exact; break-inside: avoid; }
+  }
+
+  @media (max-width: 600px) {
+    .report-header { padding: 24px 20px; }
+    .summary-card { padding: 20px; grid-template-columns: 1fr; }
+    .fristen-box { padding: 16px 20px; }
+    .section-body { padding: 16px 20px; }
+    .field-row { grid-template-columns: 1fr; gap: 2px; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- Header -->
+  <div class="report-header">
+    <div class="header-top">
+      <div>
+        <div class="brand">Vertragsanalyse · Automatisiert</div>
+        <div class="report-title">Mietvertrag</div>
+      </div>
+      <span class="status-badge status-bearbeitung">In Bearbeitung</span>
+    </div>
+    <div class="header-meta">
+      <div class="meta-item">
+        <span class="meta-label">Analysedatum</span>
+        <span class="meta-value">2026-04-18</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Seiten</span>
+        <span class="meta-value">1</span>
+      </div>
+      <div class="meta-item">
+        <span class="meta-label">Analysiert mit</span>
+        <span class="meta-value">Vertragsmanagement-Workflow v2.0 (manuell)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Summary Card -->
+  <div class="summary-card">
+    <div class="summary-item">
+      <div class="summary-label">Auftraggeber / Partei A</div>
+      <div class="summary-value">- **Partei B:**</div>
+    </div>
+    <div class="summary-item">
+      <div class="summary-label">Vertragstyp</div>
+      <div class="summary-value">- **Leistungsgegenstand:**</div>
+    </div>
+    <div class="summary-item">
+      <div class="summary-label">Auftragnehmer / Partei B</div>
+      <div class="summary-value">---</div>
+    </div>
+    <div class="summary-item">
+      <div class="summary-label">Vergütung / Vertragswert</div>
+      <div class="summary-value">---</div>
+    </div>
+  </div>
+
+  <!-- Fristen Box -->
+  
+  <div class="fristen-box">
+    <div class="fristen-header">
+      <span class="fristen-icon">⏱</span>
+      <span class="fristen-title">Fristen &amp; Termine auf einen Blick</span>
+    </div>
+    <ul class="fristen-list">
+      <li class="frist-tag"><span class="frist-type">Datum</span>- **Vertragsende / Laufzeit:**</li><li class="frist-tag"><span class="frist-type">Laufzeit</span>- **Ordentliche Kündigungsfrist:**</li><li class="frist-tag"><span class="frist-type">Kündigung</span>- **Außerordentliche Kündigung:**</li><li class="frist-tag"><span class="frist-type">A.o. Kündigung</span>- **Weitere Fristen:**</li><li class="frist-tag"><span class="frist-type">Weitere</span>---</li><li class="frist-tag"><span class="frist-type">Datum</span>01.06.2026</li><li class="frist-tag"><span class="frist-type">Laufzeit</span>Unbefristet</li><li class="frist-tag"><span class="frist-type">Kündigung</span>Kündigung durch Mieter: 3 Monate</li><li class="frist-tag"><span class="frist-type">Datum</span>01.06.2026</li>
+    </ul>
+  </div>
+
+  <!-- Sections -->
+  
+  <div class="section">
+    <div class="section-header">
+      <span class="section-number">1</span>
+      <span class="section-title">Vertragsparteien</span>
+    </div>
+    <div class="section-body">
+      <div class="field-row">
+        <span class="field-label">Partei A (Auftraggeber)</span>
+        <span class="field-value">- **Partei B:**</span>
+      </div>
+      <div class="field-row">
+        <span class="field-label">Partei B (Auftragnehmer)</span>
+        <span class="field-value">---</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <span class="section-number">2</span>
+      <span class="section-title">Vertragstyp &amp; Gegenstand</span>
+    </div>
+    <div class="section-body">
+      <div class="field-row">
+        <span class="field-label">Vertragstyp (BGB)</span>
+        <span class="field-value">- **Leistungsgegenstand:**</span>
+      </div>
+      <div class="field-row">
+        <span class="field-label">Leistungsgegenstand</span>
+        <span class="field-value">- **Vergütung / Vertragswert:**</span>
+      </div>
+      <div class="field-row">
+        <span class="field-label">Vergütung / Wert</span>
+        <span class="field-value">---</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <span class="section-number">3</span>
+      <span class="section-title">Laufzeit &amp; Fristen</span>
+    </div>
+    <div class="section-body">
+      <div class="field-row">
+        <span class="field-label">Vertragsbeginn</span>
+        <span class="field-value">- **Vertragsende / Laufzeit:**</span>
+      </div>
+      <div class="field-row">
+        <span class="field-label">Vertragsende / Laufzeit</span>
+        <span class="field-value">- **Ordentliche Kündigungsfrist:**</span>
+      </div>
+      <div class="field-row">
+        <span class="field-label">Ordentliche Kündigung</span>
+        <span class="field-value">- **Außerordentliche Kündigung:**</span>
+      </div>
+      <div class="field-row">
+        <span class="field-label">Außerordentliche Kündigung</span>
+        <span class="field-value">- **Weitere Fristen:**</span>
+      </div>
+      <div class="field-row">
+        <span class="field-label">Weitere Fristen</span>
+        <span class="field-value">---</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <span class="section-number">4</span>
+      <span class="section-title">Kernpflichten</span>
+    </div>
+    <div class="section-body">
+      <div class="subsection-title">Pflichten Partei A</div>
+      <ul class="content-list"><li class="empty-item" style="color:#cbd5e1;font-style:italic;">Nicht angegeben</li></ul>
+      <div class="subsection-title">Pflichten Partei B</div>
+      <ul class="content-list"><li class="empty-item" style="color:#cbd5e1;font-style:italic;">Nicht angegeben</li></ul>
+      <div class="subsection-title">Relevante Nebenpflichten</div>
+      <ul class="content-list"><li>---</li></ul>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <span class="section-number">5</span>
+      <span class="section-title">Rechtliche Risiken &amp; Auffälligkeiten</span>
+    </div>
+    <div class="section-body">
+      <div class="risk-item medium">---</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <span class="section-number">6</span>
+      <span class="section-title">Handlungsempfehlungen</span>
+    </div>
+    <div class="section-body">
+      <div class="empfehlung-gruppe">
+        <div class="empfehlung-label label-muss">⛔ Muss – vor Unterzeichnung</div>
+        <ul class="content-list"><li class="empty-item" style="color:#cbd5e1;font-style:italic;">Nicht angegeben</li></ul>
+      </div>
+      <div class="empfehlung-gruppe">
+        <div class="empfehlung-label label-sollte">⚠ Sollte – empfohlen</div>
+        <ul class="content-list"><li class="empty-item" style="color:#cbd5e1;font-style:italic;">Nicht angegeben</li></ul>
+      </div>
+      <div class="empfehlung-gruppe">
+        <div class="empfehlung-label label-kann">✓ Kann – optional</div>
+        <ul class="content-list"><li>---</li></ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header">
+      <span class="section-number">7</span>
+      <span class="section-title">Rohtext (Quelle)</span>
+    </div>
+    <div class="section-body">
+      <div class="rohtext-box">
+        <pre>[Seite 1]
+MIETVERTRAG
+zwischen Schmidt Immobilien GmbH, Sendlinger Str. 20, 80331 München
+(Vermieter) und Luca Langer, Nymphenburger Str. 5, 80335 München
+(Mieter)
+§ 1 Mietobjekt
+3-Zimmer-Wohnung, 75 qm, Nymphenburger Str. 5, 80335 München.
+§ 2 Miete
+Kaltmiete: 1.400 EUR. Nebenkosten: 200 EUR. Gesamt: 1.600 EUR.
+Fälligkeit: 1. Werktag des Monats.
+§ 3 Mietdauer
+Beginn: 01.06.2026. Unbefristet.
+Kündigung durch Mieter: 3 Monate. Vermieter: gesetzliche Fristen.
+§ 4 Kaution
+3 Monatskaltmieten = 4.200 EUR, zahlbar bis 01.06.2026.
+§ 5 Schönheitsreparaturen
+Mieter trägt Schönheitsreparaturen bei Auszug.
+Gerichtsstand: München.</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="report-footer">
+    <span class="footer-brand">Vertragsmanagement · KI-Analyse</span>
+    <span class="footer-date">Erstellt 18.04.2026</span>
+  </div>
+
+</div>
+</body>
+</html>
