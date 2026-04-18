@@ -210,6 +210,13 @@ if seite == "📤 Analyse":
 elif seite == "📋 Datenbank":
     st.header("Vertrags-Datenbank")
 
+    try:
+        if st.secrets.get("ANTHROPIC_API_KEY"):  # läuft auf Streamlit Cloud
+            st.info("ℹ️ Cloud-Modus: Datenbank wird bei App-Neustart zurückgesetzt. "
+                    "Für persistente Nutzung lokal starten.")
+    except Exception:
+        pass
+
     zeilen = lade_csv(DB_PFAD)
     vollstaendig = [z for z in zeilen if z.get("partei_a") or z.get("partei_b")]
 
