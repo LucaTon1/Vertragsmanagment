@@ -1,0 +1,6 @@
+timestamp,datei,modell,input_tokens,output_tokens,cache_write_tokens,cache_read_tokens,kosten_usd
+2026-04-17T13:54:34,Saas Dienstleistungsvertrag Realistisch,claude-haiku-4-5-20251001,4923,4096,0,0,0.025403
+2026-04-17T13:56:37,Saas Dienstleistungsvertrag Realistisch,claude-haiku-4-5-20251001,4923,8175,0,0,0.045798
+2026-04-17T14:05:07,Saas Dienstleistungsvertrag Realistisch,claude-haiku-4-5-20251001,7313,8192,0,0,0.048273
+2026-04-17T14:07:23,Saas Dienstleistungsvertrag Realistisch,claude-sonnet-4-6,4682,8192,2630,0,0.146788
+2026-04-18T09:33:34,Arbeitsvertrag,claude-haiku-4-5-20251001,927,6084,5709,0,0.038483
