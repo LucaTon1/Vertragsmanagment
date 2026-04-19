@@ -315,6 +315,155 @@ def analysiere_vertrag(
     return analyse_text, token_info
 
 
+def extrahiere_risiko_score(analyse_text: str) -> dict:
+    """Extrahiert Risiko-Score und Begründung aus dem Analyse-Text."""
+    import re
+    score_match = re.search(r'\*\*Risiko-Score:\*\*\s*(GRÜN|GELB|ROT)', analyse_text, re.IGNORECASE)
+    begruendung_match = re.search(r'\*\*Begründung[^*]*\*\*[:\s]*([^\n]+)', analyse_text)
+    score = score_match.group(1).upper() if score_match else "UNBEKANNT"
+    begruendung = begruendung_match.group(1).strip() if begruendung_match else ""
+    return {"risiko_score": score, "risiko_begruendung": begruendung}
+
+
+def beantworte_frage(rohtext: str, frage: str, modell: str = "claude-haiku-4-5-20251001") -> str:
+    """Beantwortet eine Frage zu einem Vertragstext. Nutzt Prompt Caching."""
+    try:
+        import anthropic
+    except ImportError:
+        raise ImportError("anthropic-Paket nicht installiert. Lösung: pip install anthropic")
+
+    api_key = lade_api_key()
+    client = anthropic.Anthropic(api_key=api_key)
+
+    system = (
+        "Du bist ein Vertragsexperte. Beantworte Fragen zu dem folgenden Vertrag präzise und auf Deutsch. "
+        "Antworte in 2–4 Sätzen. Wenn die Information nicht im Vertrag steht, sage das klar."
+    )
+
+    response = client.messages.create(
+        model=modell,
+        max_tokens=512,
+        system=[
+            {
+                "type": "text",
+                "text": system,
+                "cache_control": {"type": "ephemeral"},
+            },
+            {
+                "type": "text",
+                "text": f"VERTRAGSTEXT:\n\n{rohtext[:15000]}",
+                "cache_control": {"type": "ephemeral"},
+            },
+        ],
+        messages=[{"role": "user", "content": frage}],
+    )
+    return response.content[0].text
+
+
+def dsgvo_check(rohtext: str, modell: str = "claude-haiku-4-5-20251001") -> tuple:
+    """
+    Spezieller DSGVO-Klausel-Check für Verträge.
+    Günstiger als Vollanalyse da fokussierter Output-Prompt.
+    """
+    import anthropic
+    api_key = lade_api_key()
+    client = anthropic.Anthropic(api_key=api_key)
+
+    system = """Du bist ein DSGVO-Experte. Analysiere den Vertragstext ausschließlich auf datenschutzrechtliche Aspekte.
+
+Erstelle einen strukturierten Bericht mit diesen Abschnitten:
+
+## DSGVO-Check
+
+**Gesamtbewertung:** [KONFORM | PRÜFBEDARF | KRITISCH]
+
+### 1. Personenbezogene Daten
+Werden personenbezogene Daten verarbeitet? Welche Kategorien?
+
+### 2. Auftragsverarbeitung (Art. 28 DSGVO)
+Ist ein AVV notwendig? Vorhanden?
+
+### 3. Datenweitergabe / Drittländer (Art. 44-49 DSGVO)
+Werden Daten an Dritte oder Drittländer übermittelt?
+
+### 4. Betroffenenrechte (Art. 15-22 DSGVO)
+Sind Betroffenenrechte adressiert (Auskunft, Löschung, Widerspruch)?
+
+### 5. Technische & organisatorische Maßnahmen (Art. 32 DSGVO)
+Sind TOMs erwähnt oder geregelt?
+
+### 6. Handlungsempfehlungen
+Konkrete nächste Schritte (maximal 3 Punkte).
+
+Antworte präzise. Wenn eine Kategorie nicht relevant ist, schreibe „Nicht anwendbar."."""
+
+    response = client.messages.create(
+        model=modell,
+        max_tokens=1024,
+        system=[
+            {"type": "text", "text": system, "cache_control": {"type": "ephemeral"}},
+            {"type": "text", "text": f"VERTRAGSTEXT:\n\n{rohtext[:20000]}", "cache_control": {"type": "ephemeral"}},
+        ],
+        messages=[{"role": "user", "content": "Führe den DSGVO-Check durch."}],
+    )
+    text = response.content[0].text
+    usage = response.usage
+    token_info = {
+        "modell": modell,
+        "input_tokens": getattr(usage, "input_tokens", 0),
+        "output_tokens": getattr(usage, "output_tokens", 0),
+        "cache_creation_tokens": getattr(usage, "cache_creation_input_tokens", 0),
+        "cache_read_tokens": getattr(usage, "cache_read_input_tokens", 0),
+    }
+    return text, token_info
+
+
+def vergleiche_vertraege(vertrag_a: dict, vertrag_b: dict, modell: str = "claude-haiku-4-5-20251001") -> tuple:
+    """
+    Vergleicht zwei Verträge anhand ihrer gespeicherten Metadaten.
+    Keine PDF-Re-Uploads nötig → sehr günstig (~0,02 $).
+    """
+    import anthropic
+    api_key = lade_api_key()
+    client = anthropic.Anthropic(api_key=api_key)
+
+    def fmt(v: dict) -> str:
+        felder = ["quelldatei", "partei_a", "partei_b", "vertragstyp", "vertragsbeginn",
+                  "vertragsende", "kuendigungsfrist", "status_workflow", "risiko_score",
+                  "risiko_begruendung", "tags", "notizen"]
+        return "\n".join(f"- {k}: {v.get(k, '–')}" for k in felder)
+
+    prompt = f"""Vergleiche diese zwei Verträge strukturiert:
+
+VERTRAG A:
+{fmt(vertrag_a)}
+
+VERTRAG B:
+{fmt(vertrag_b)}
+
+Erstelle einen Vergleich mit:
+## Gemeinsamkeiten
+## Wesentliche Unterschiede
+## Risiko-Einschätzung im Vergleich
+## Empfehlung (welcher Vertrag ist günstiger/riskanter und warum)
+
+Antworte präzise auf Deutsch."""
+
+    response = client.messages.create(
+        model=modell,
+        max_tokens=800,
+        messages=[{"role": "user", "content": prompt}],
+    )
+    text = response.content[0].text
+    usage = response.usage
+    token_info = {
+        "modell": modell,
+        "input_tokens": getattr(usage, "input_tokens", 0),
+        "output_tokens": getattr(usage, "output_tokens", 0),
+    }
+    return text, token_info
+
+
 # ── Standalone CLI ────────────────────────────────────────────────────────────
 
 def main():

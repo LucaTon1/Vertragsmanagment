@@ -104,3 +104,67 @@ vertragsmanagement/
 | Prompt Caching für Haiku 4.5 greift nicht | [gelöst] | System-Prompt auf ~3475 Tokens erweitert (Minimum 2048) |
 | vertrags_datenbank.py schreibt leere Templates in CSV | [gelöst] | Filter nach vollständigen Einträgen; `--alle` für Debugging |
 | Parser erkennt `Partei A (Mandant / ...)` nicht | [gelöst] | Regex angepasst: `[^:*]*` erlaubt optionalen Text vor `:**` |
+| check_setup.py prüfte python-docx nicht | [gelöst] | python-docx in Paketliste ergänzt |
+| requirements.txt hatte veraltete anthropic-Mindestversion | [gelöst] | 0.40.0 → 0.90.0 |
+
+---
+
+## Supabase-Integration (ab 2026-04-18)
+
+**Status:** Live – Supabase ist als persistentes DB-Backend integriert.
+
+| Komponente | Detail |
+|---|---|
+| Supabase-Projekt | `utoqerrigzhhherxcbef.supabase.co` |
+| Tabelle | `vertraege` (SQL in DEPLOY.md Abschnitt 3) |
+| Modul | `tools/supabase_db.py` |
+| Fallback | Automatisch auf lokale CSV wenn nicht konfiguriert |
+| Credentials lokal | `.env` → `SUPABASE_URL` + `SUPABASE_KEY` |
+| Credentials Cloud | Streamlit Secrets (bereits eingetragen) |
+
+**Verhalten in app.py:**
+- Supabase aktiv → ☁️-Banner + Daten aus Supabase
+- Supabase nicht konfiguriert → ⚠️-Banner + lokale CSV (wie vorher)
+- Nach Analyse → Eintrag wird in Supabase UND CSV geschrieben
+
+**Migration bestehender CSV-Daten:**
+```bash
+python3 tools/supabase_db.py --sync
+```
+
+**Neue Spalten (einmalig in Supabase SQL Editor ausführen):**
+```sql
+ALTER TABLE vertraege ADD COLUMN IF NOT EXISTS risiko_score TEXT DEFAULT 'UNBEKANNT';
+ALTER TABLE vertraege ADD COLUMN IF NOT EXISTS risiko_begruendung TEXT;
+ALTER TABLE vertraege ADD COLUMN IF NOT EXISTS status_workflow TEXT DEFAULT 'Aktiv';
+ALTER TABLE vertraege ADD COLUMN IF NOT EXISTS tags TEXT DEFAULT '';
+ALTER TABLE vertraege ADD COLUMN IF NOT EXISTS notizen TEXT DEFAULT '';
+
+CREATE TABLE IF NOT EXISTS audit_log (
+    id BIGSERIAL PRIMARY KEY,
+    aktion TEXT NOT NULL,
+    vertrag_id TEXT,
+    quelldatei TEXT,
+    details TEXT,
+    erstellt_am TIMESTAMPTZ DEFAULT NOW()
+);
+```
+
+---
+
+## Nächste mögliche Aufgaben (Priorität)
+
+✅ Delete-Button – Löscht Vertrag per ID aus Supabase (tools/app.py + supabase_db.py)
+✅ SMTP-Reminder – UI-Button sendet Fristen-E-Mails via SMTP (fristen_reminder.py + app.py)
+✅ PDF-Hash-Cache – SHA256-Fingerprint verhindert doppelte API-Calls (supabase_db.py + app.py)
+✅ Batch-Upload – Mehrere PDFs gleichzeitig analysieren mit Progress-Bar (app.py)
+✅ Risk Scoring – Risiko-Score 🟢/🟡/🔴 aus KI-Analyse extrahieren + in DB speichern + anzeigen
+✅ Status-Workflow – Editierbarer Status pro Vertrag (Entwurf/In Prüfung/Aktiv/Gekündigt/Abgelaufen)
+✅ Analytics Dashboard – Portfolio-Übersicht: KPIs, Charts, ablaufende Verträge
+✅ Document Q&A – Fragen zum Vertrag mit Haiku 4.5 + Prompt Caching beantworten
+✅ Excel-Export – CSV + XLSX-Download der gesamten Vertragsdatenbank
+✅ Volltextsuche + Tags – Suchfeld in Datenbank, kommagetrennte Tags pro Vertrag
+✅ Notizen pro Vertrag – Aufklappbarer Notizen-Bereich mit Speichern-Button
+✅ Audit Trail – log_aktion() in supabase_db.py, Aktivitäts-Log in Analytics
+✅ DSGVO-Klausel-Check – Optionaler DSGVO-Analyse-Modus mit eigenem Prompt + Download
+✅ Vertragsvergleich (KI-gestützt) – Neue Seite "⚖️ Vergleich" in Navigation
